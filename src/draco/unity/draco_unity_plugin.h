@@ -29,19 +29,19 @@
 namespace draco {
 
 extern "C" {
-  struct EXPORT_API DracoToUnityMesh {
-    int num_faces;
-    int *indices;
+  struct EXPORT_API DracoToUnityPointCloud {
+
     int num_vertices;
 
     float *position;
-    float *normal;
-    float *texcoord;
-    float *color;
+    int *num_color;
+    int num_points;
+    int *vertex_indices;
+
   };
 
-  int EXPORT_API DecodeMeshForUnity(char *data, unsigned int length,
-                         DracoToUnityMesh **tmp_mesh);
+  int EXPORT_API DecodePointCloudForUnity(char *data, unsigned int length,
+                         DracoToUnityPointCloud **tmp_point_cloud);
 }  // extern "C"
 
 }  // namespace draco
