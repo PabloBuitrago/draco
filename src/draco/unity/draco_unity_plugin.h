@@ -32,9 +32,8 @@ extern "C" {
   struct EXPORT_API DracoToUnityPointCloud {
 
     int num_vertices;
-
     float *position;
-    int *num_color;
+    int *num_colors;
     int num_points;
     int *vertex_indices;
 
