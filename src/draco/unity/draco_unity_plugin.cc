@@ -42,7 +42,7 @@ int DecodePointCloudForUnity(char *data, unsigned int length,
   DracoToUnityPointCloud *unity_point_cloud = *tmp_point_cloud;
   unity_point_cloud->num_points = in_point_cloud->num_points();
   unity_point_cloud->num_vertices = in_point_cloud->num_points();
-
+  
   
   // std::unique_ptr<draco::PointCloud> pc;
   // pc = std::move(in_point_cloud);
@@ -56,6 +56,17 @@ int DecodePointCloudForUnity(char *data, unsigned int length,
     memcpy(unity_point_cloud->position + i.value() * 3, pos_value.data(),
            sizeof(float) * 3);
   }
+    
+    unity_point_cloud->color = new float[in_point_cloud->num_points() * 4];
+    const auto col_att =
+    in_point_cloud->GetNamedAttribute(draco::GeometryAttribute::COLOR);
+    std::array<float, 4> col_value;
+    for (draco::PointIndex i(0); i < in_point_cloud->num_points(); ++i) {
+        const draco::AttributeValueIndex val_index = col_att->mapped_index(i);
+        if (!col_att->ConvertValue<float, 4>(val_index, &col_value[0])) return -8;
+        memcpy(unity_point_cloud->color + i.value() * 4, col_value.data(),
+               sizeof(float) * 4);
+    }
 
   return in_point_cloud->num_points();
 }

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-
 public unsafe class DracoPointCloudLoader
 {
 	// Must stay the order to be consistent with C++ interface.
@@ -66,13 +65,14 @@ public unsafe class DracoPointCloudLoader
 		return BitConverter.ToSingle (byte_array, 0);
 	}
 		
-	public int LoadPointsFromAsset (string asset_name, ref List<Vector3> points)
+	public int LoadPointsFromAsset (string asset_name, ref List<Vector3> points, ref List<Color32> colors)
 	{
 		TextAsset asset = Resources.Load (asset_name, typeof(TextAsset)) as TextAsset;
 		if (asset == null) {
 			Debug.Log ("Didn't load file!");
 			return -1;
 		}
+
 		byte[] bunny_data = asset.bytes;
 		Debug.Log (bunny_data.Length.ToString ());
 		if (bunny_data.Length == 0) {
@@ -80,7 +80,7 @@ public unsafe class DracoPointCloudLoader
 			return -1;
 		}
 			
-		return DecodePoints (bunny_data, ref points);
+		return DecodePoints (bunny_data, ref points, ref colors);
 	}
 
 	/*
@@ -92,7 +92,7 @@ public unsafe class DracoPointCloudLoader
 		return DecodePoints (www.bytes, ref points);
 	}
 */
-	public unsafe int DecodePoints (byte[] data, ref List<Vector3> points)
+	public unsafe int DecodePoints (byte[] data, ref List<Vector3> points, ref List<Color32> colors)
 	{
 
 		DracoToUnityPointCloud* tmp_point_cloud;
@@ -101,9 +101,12 @@ public unsafe class DracoPointCloudLoader
 			return -1;
 		}
 
+
+
 		Debug.Log ("Num points: " + tmp_point_cloud->num_points.ToString ());
 		Debug.Log ("Num vertices: " + tmp_point_cloud->num_vertices.ToString ());
-		Debug.Log ("color: " + tmp_point_cloud->color.Length);
+		//Debug.Log ("Num colors: " + tmp_point_cloud->color.ToString());
+ 		
 
 		// For floating point numbers, there's no Marshal functions could directly read from the unmanaged data.
 		// TODO: Find better way to read float numbers.
@@ -122,7 +125,13 @@ public unsafe class DracoPointCloudLoader
 						ReadFloatFromIntPtr (tmp_point_cloud->position, i * byte_stride_per_vertex + byte_stride_per_value * j) * 60;
 			}
 		}
-
+			
+		for ( var i = 0; i < new_points.Length; i++){ 
+			UnitySerializer us = new UnitySerializer();
+			us.Serialize(tmp_point_cloud->color[i]);
+			byte[] byteArray = us.ByteArray;
+			colors.Add(new Color32(byteArray[0], byteArray[1], byteArray[2], byteArray[3]));
+		}
 
 
 		Marshal.FreeCoTaskMem (tmp_point_cloud->position);
@@ -142,7 +151,7 @@ public unsafe class DracoPointCloudLoader
 		} else {
 			points.Add (new_vertices);
 		}*/
-		//points.Add (new_vertices);
+
 
 		return points.Count;
 

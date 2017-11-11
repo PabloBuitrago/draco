@@ -13,8 +13,9 @@ public class DracoDecodingObject : MonoBehaviour {
 		debug_text = GetComponentInChildren<TextMesh> ();
 
 		List<Vector3> points = new List<Vector3>();
+		List<Color32> colors = new List<Color32>();
 		DracoPointCloudLoader draco_loader = new DracoPointCloudLoader ();
-		int num_verts = draco_loader.LoadPointsFromAsset ("bunny", ref points);
+		int num_verts = draco_loader.LoadPointsFromAsset ("bunny", ref points, ref colors);
 
 		// TODO: Meshes.
 			/*

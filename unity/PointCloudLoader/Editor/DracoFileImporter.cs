@@ -24,13 +24,14 @@ public class DracoFileImporter : AssetPostprocessor
 			}
 				
 			List<Vector3> points = new List<Vector3>();
+			List<Color32> colors = new List<Color32>();
 			DracoPointCloudLoader draco_loader = new DracoPointCloudLoader ();
 			// TODO: Fix name
 			str.LastIndexOf('/');
 			int length = str.Length - ".drc.bytes".Length - str.LastIndexOf('/') - 1;
 			string file_name = str.Substring(str.LastIndexOf('/') + 1, length);
 			Debug.Log ("File name: " + file_name);
-			int num_faces = draco_loader.LoadPointsFromAsset (file_name+".drc", ref points);
+			int num_faces = draco_loader.LoadPointsFromAsset (file_name+".drc", ref points, ref colors);
 
 			// TODO: points.
 			if (num_faces > 0) {
