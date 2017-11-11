@@ -33,7 +33,7 @@ extern "C" {
 
     int num_vertices;
     float *position;
-    int *num_colors;
+    float *color;
     int num_points;
     int *vertex_indices;
 
